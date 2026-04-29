@@ -1,0 +1,67 @@
+﻿app_name: "HealthTrack Mobile"
+description: "Application Android de suivi santé avec compte utilisateur, synchronisation API et suivi de localisation."
+app_type: "Android mobile app"
+
+users:
+  - "Patient"
+  - "Médecin"
+  - "Administrateur support"
+
+sensitive_data:
+  - "Nom"
+  - "Email"
+  - "Données de santé"
+  - "Localisation"
+  - "Token JWT"
+
+permissions:
+  - "INTERNET"
+  - "ACCESS_FINE_LOCATION"
+  - "CAMERA"
+  - "READ_EXTERNAL_STORAGE"
+
+endpoints:
+  - name: "Login API"
+    url: "https://api.healthtrack.local/auth/login"
+    method: "POST"
+    auth_required: false
+  - name: "Patient data API"
+    url: "https://api.healthtrack.local/patients"
+    method: "GET"
+    auth_required: true
+  - name: "Legacy upload API"
+    url: "http://legacy.healthtrack.local/upload"
+    method: "POST"
+    auth_required: true
+
+components:
+  - name: "LoginActivity"
+    type: "Activity"
+    exported: false
+  - name: "DeepLinkActivity"
+    type: "Activity"
+    exported: true
+  - name: "SyncService"
+    type: "Service"
+    exported: false
+
+authentication:
+  type: "OAuth2 / JWT"
+  login: true
+  mfa: false
+  token_storage: "SharedPreferences"
+
+storage:
+  local_database: "Room"
+  stores_tokens: true
+  encrypted_storage: false
+  logs_sensitive_data: true
+
+network_flows:
+  - "Mobile app -> API backend"
+  - "Mobile app -> Legacy upload server"
+
+business_context:
+  sector: "Santé"
+  regulation: "RGPD"
+  criticality: "High"

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Threat Modeling Report</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        
+        :root {
+            --primary: #0A84FF;
+            --secondary: #00D4FF;
+            --dark-navy: #080D16;
+            --card-bg: #F8FAFC;
+            --border: #E2E8F0;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --critical: #FF4B4B;
+            --high: #F59E0B;
+            --medium: #06B6D4;
+            --low: #10B981;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Page Layout */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 0 auto;
+            background: white;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        /* Cover Page */
+        .cover-page {
+            background-color: var(--dark-navy);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 297mm;
+            padding: 40mm 20mm;
+        }
+
+        .cover-header {
+            border-left: 5px solid var(--primary);
+            padding-left: 30px;
+        }
+
+        .cover-title {
+            font-size: 48pt;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -2px;
+        }
+
+        .cover-subtitle {
+            font-size: 20pt;
+            color: var(--secondary);
+            margin-top: 10px;
+        }
+
+        .cover-info {
+            margin-top: 100px;
+        }
+
+        .cover-app-name {
+            font-size: 24pt;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .cover-meta {
+            font-size: 12pt;
+            color: #94A3B8;
+        }
+
+        .cover-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .badge-cyber {
+            border: 1px solid #1E293B;
+            background: rgba(255,255,255,0.05);
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 10pt;
+            color: #94A3B8;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Section Headers */
+        h1 {
+            font-size: 24pt;
+            font-weight: 800;
+            color: var(--dark-navy);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h2 {
+            font-size: 18pt;
+            font-weight: 700;
+            color: var(--dark-navy);
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .kpi-label {
+            font-size: 8pt;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-size: 20pt;
+            font-weight: 800;
+            color: var(--dark-navy);
+            margin: 5px 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 9pt;
+        }
+
+        th {
+            background-color: var(--dark-navy);
+            color: white;
+            text-align: left;
+            padding: 12px 10px;
+            font-weight: 700;
+        }
+
+        td {
+            border-bottom: 1px solid var(--border);
+            padding: 10px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #F8FAFC;
+        }
+
+        .badge-level {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 8pt;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .critical { background: rgba(255, 75, 75, 0.1); color: var(--critical); border: 1px solid var(--critical); }
+        .high { background: rgba(245, 158, 11, 0.1); color: var(--high); border: 1px solid var(--high); }
+        .medium { background: rgba(6, 182, 212, 0.1); color: var(--medium); border: 1px solid var(--medium); }
+        .low { background: rgba(16, 185, 129, 0.1); color: var(--low); border: 1px solid var(--low); }
+
+        /* Threat Cards */
+        .threat-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .threat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .threat-id {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 14pt;
+        }
+
+        .threat-title {
+            font-weight: 700;
+            font-size: 12pt;
+        }
+
+        .threat-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            font-size: 9pt;
+        }
+
+        .meta-label {
+            color: var(--text-muted);
+            font-weight: 700;
+            display: block;
+        }
+
+        .meta-val {
+            font-weight: 600;
+        }
+
+        .threat-mitigation {
+            margin-top: 15px;
+            background: #F1F5F9;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 9pt;
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 10mm;
+            left: 20mm;
+            right: 20mm;
+            font-size: 8pt;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Generic utilities */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .recommendation-card {
+            border-left: 4px solid var(--secondary);
+            background: #F0F9FF;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cover Page -->
+    <div class="page cover-page page-break">
+        <div class="cover-header">
+            <h1 class="cover-title">THREAT MODELING<br>REPORT</h1>
+            <div class="cover-subtitle">Security Architecture Assessment</div>
+            
+            <div class="badge-container">
+                <span class="badge-cyber">STRIDE</span>
+                <span class="badge-cyber">OWASP MASVS</span>
+                <span class="badge-cyber">Risk Register</span>
+                <span class="badge-cyber">Mobile Security</span>
+            </div>
+        </div>
+
+        <div class="cover-info">
+            <div class="cover-app-name">{{ app.app_name }}</div>
+            <div class="cover-meta">
+                Document Classification: <strong>Academic / Internal Security Report</strong><br>
+                Date of Generation: {{ generated_at }}<br>
+                Version: 1.0.0
+            </div>
+        </div>
+
+        <div class="cover-footer">
+            <div style="font-size: 10pt; font-weight: 700; color: var(--secondary);">THREAT MODELING ASSISTANT</div>
+            <div style="text-align: right; font-size: 8pt; color: #64748B;">© 2024 Automated Security Analysis</div>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="page">
+        <h1>Executive Summary</h1>
+        <p>This document presents a comprehensive threat model for <strong>{{ app.app_name }}</strong>. The analysis focuses on mobile-specific attack vectors, data protection, and system resilience based on the provided architecture.</p>
+        
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Threats</div>
+                <div class="kpi-value">{{ analysis.threats|length }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Max Score</div>
+                <div class="kpi-value">{{ metrics.max_score }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Global Risk</div>
+                <div class="kpi-value" style="color: {% if metrics.global_level in ['Critical', 'High'] %}var(--critical){% else %}var(--high){% endif %}; font-size: 14pt;">{{ metrics.global_level }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">MASVS Cats</div>
+                <div class="kpi-value">{{ metrics.masvs_count }}</div>
+            </div>
+        </div>
+
+        <p style="background: #F8FAFC; border-left: 4px solid var(--primary); padding: 15px; font-style: italic;">
+            "The analysis identified {{ analysis.threats|length }} threats across mobile authentication, storage, network and privacy areas. 
+            The highest risk score is {{ metrics.max_score }}, classified as {{ metrics.global_level }}. 
+            Priority remediation should focus on transport security, token storage and API abuse prevention."
+        </p>
+
+        <h2>Application Overview</h2>
+        <table>
+            <tr><th width="30%">Attribute</th><th>Value</th></tr>
+            <tr><td>Application Name</td><td>{{ app.app_name }}</td></tr>
+            <tr><td>Type</td><td>{{ app.app_type }}</td></tr>
+            <tr><td>Business Sector</td><td>{{ app.business_context.sector }}</td></tr>
+            <tr><td>Regulation</td><td>{{ app.business_context.regulation }}</td></tr>
+            <tr><td>Criticality</td><td>{{ app.business_context.criticality }}</td></tr>
+            <tr><td>Authentication</td><td>{{ app.authentication.type }}</td></tr>
+            <tr><td>Local Storage</td><td>{{ app.storage.local_database }}</td></tr>
+        </table>
+
+        <h2>Methodology</h2>
+        <p>The analysis follows the <strong>STRIDE</strong> framework for threat categorization. Each threat is evaluated using a custom scoring formula:</p>
+        <div style="text-align: center; font-weight: 800; font-size: 14pt; padding: 15px; background: #F1F5F9; border-radius: 8px;">
+            Risk = Impact × Probability × Exposure
+        </div>
+        <p>Scores range from 1 to 125, mapped to levels: Low (1-25), Medium (26-60), High (61-100), and Critical (101-125). All threats are cross-referenced with <strong>OWASP MASVS</strong> standards.</p>
+
+        <div class="footer">
+            <span>Threat Modeling Report: {{ app.app_name }}</span>
+            <span>Page 2</span>
+        </div>
+    </div>
+
+    <!-- Assets & Risks -->
+    <div class="page">
+        <h1>System Components</h1>
+        <div class="grid-2">
+            <div>
+                <h2>Critical Assets</h2>
+                <ul style="font-size: 9pt;">
+                    {% for asset in analysis.assets %}
+                    <li style="margin-bottom: 5px;"><strong>A-{{ "%02d"|format(loop.index) }}</strong>: {{ asset }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <h2>Entry Points</h2>
+                <ul style="font-size: 9pt;">
+                    {% for ep in analysis.entry_points %}
+                    <li style="margin-bottom: 5px;"><strong>E-{{ "%02d"|format(loop.index) }}</strong>: {{ ep }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <h1>Risk Register</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Threat Description</th>
+                    <th>Category</th>
+                    <th>Severity</th>
+                    <th>Score</th>
+                    <th>MASVS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in analysis.threats %}
+                <tr>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.threat }}</td>
+                    <td>{{ t.stride }}</td>
+                    <td><span class="badge-level {{ t.level|lower }}">{{ t.level }}</span></td>
+                    <td>{{ t.score }}</td>
+                    <td>{{ t.masvs }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <span>Threat Modeling Report: {{ app.app_name }}</span>
+            <span>Page 3</span>
+        </div>
+    </div>
+
+    <!-- Detailed Threats -->
+    <div class="page">
+        <h1>Detailed Threat Analysis</h1>
+        {% for t in analysis.threats %}
+        <div class="threat-card">
+            <div class="threat-header">
+                <span class="threat-id">{{ t.id }}</span>
+                <span class="threat-title">{{ t.stride }}</span>
+                <span class="badge-level {{ t.level|lower }}">{{ t.level }} ({{ t.score }})</span>
+            </div>
+            <p><strong>Scenario:</strong> {{ t.threat }}</p>
+            <div class="threat-meta-grid">
+                <div><span class="meta-label">Asset</span><span class="meta-val">{{ t.asset }}</span></div>
+                <div><span class="meta-label">Entry Point</span><span class="meta-val">{{ t.entry_point }}</span></div>
+                <div><span class="meta-label">MASVS</span><span class="meta-val">{{ t.masvs }}</span></div>
+                <div><span class="meta-label">Impact</span><span class="meta-val">{{ t.impact }}</span></div>
+                <div><span class="meta-label">Probability</span><span class="meta-val">{{ t.probability }}</span></div>
+                <div><span class="meta-label">Exposure</span><span class="meta-val">{{ t.exposure }}</span></div>
+            </div>
+            <div class="threat-mitigation">
+                <strong>Proposed Mitigation:</strong><br>
+                {{ t.mitigation }}
+            </div>
+        </div>
+        {% if loop.index % 4 == 0 and not loop.last %}
+        <div class="footer">
+            <span>Threat Modeling Report: {{ app.app_name }}</span>
+            <span>Page 4</span>
+        </div>
+    </div><div class="page"><h1>Detailed Threat Analysis (Cont.)</h1>
+        {% endif %}
+        {% endfor %}
+
+        <div class="footer">
+            <span>Threat Modeling Report: {{ app.app_name }}</span>
+            <span>Page {{ (analysis.threats|length // 4) + 4 }}</span>
+        </div>
+    </div>
+
+    <!-- Recommendations & Conclusion -->
+    <div class="page">
+        <h1>Security Recommendations</h1>
+        <p>Based on the identified risks, the following prioritized security measures are recommended for implementation:</p>
+        
+        {% for t in analysis.threats[:6] %}
+        <div class="recommendation-card">
+            <div style="font-size: 8pt; font-weight: 800; color: var(--primary); margin-bottom: 5px;">PRIORITY: {{ t.level }}</div>
+            <div style="font-weight: 700; margin-bottom: 3px;">{{ t.mitigation.split(':')[0] if ':' in t.mitigation else 'Remediation Step' }}</div>
+            <div style="font-size: 9pt; color: var(--text-muted);">{{ t.mitigation }}</div>
+            <div style="font-size: 7pt; margin-top: 5px; color: #94A3B8;">Addresses: {{ t.id }} | Mapping: {{ t.masvs }}</div>
+        </div>
+        {% endfor %}
+
+        <h2>Missing Context & Security Questions</h2>
+        <ul style="font-size: 9pt;">
+            {% for q in analysis.missing_questions %}
+            <li style="margin-bottom: 5px;">{{ q }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Report Limitations</h2>
+        <p style="font-size: 8pt; color: var(--text-muted);">This report is based on declared architecture and YAML input. It does not replace manual code review, penetration testing, dynamic analysis, APK reverse engineering or production security validation. The scores are heuristics-based and should be validated against actual environment constraints.</p>
+
+        <h2>Conclusion</h2>
+        <p>Threat modeling is a continuous process. The high-risk items identified in this report should be integrated into the development backlog as security requirements. Regular updates to this model are recommended as the application architecture evolves.</p>
+
+        <div class="footer">
+            <span>Threat Modeling Report: {{ app.app_name }}</span>
+            <span>Final Page</span>
+        </div>
+    </div>
+
+</body>
+</html>

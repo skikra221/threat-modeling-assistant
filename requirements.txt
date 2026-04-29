@@ -1,0 +1,9 @@
+streamlit
+pyyaml
+jinja2
+pandas
+reportlab
+plotly
+markdown
+beautifulsoup4
+playwright

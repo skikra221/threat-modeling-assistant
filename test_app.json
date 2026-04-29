@@ -1,0 +1,46 @@
+{
+  "app_name": "FintechWallet Mobile",
+  "description": "Application Android de gestion de portefeuille crypto avec comptes bancaires liés.",
+  "app_type": "Android mobile app",
+  "users": ["Client", "Conseiller"],
+  "sensitive_data": ["Nom", "RIB", "Crypto Keys", "PIN Code"],
+  "permissions": ["INTERNET", "CAMERA", "USE_BIOMETRIC"],
+  "endpoints": [
+    {
+      "name": "GraphQL API",
+      "url": "https://api.fintechwallet.com/graphql",
+      "method": "POST",
+      "auth_required": true
+    }
+  ],
+  "components": [
+    {
+      "name": "TransferActivity",
+      "type": "Activity",
+      "exported": false
+    },
+    {
+      "name": "PaymentDeepLinkReceiver",
+      "type": "BroadcastReceiver",
+      "exported": true
+    }
+  ],
+  "authentication": {
+    "type": "Biometric + PIN",
+    "login": true,
+    "mfa": true,
+    "token_storage": "EncryptedSharedPreferences"
+  },
+  "storage": {
+    "local_database": "Realm (Encrypted)",
+    "stores_tokens": true,
+    "encrypted_storage": true,
+    "logs_sensitive_data": false
+  },
+  "network_flows": ["Mobile app -> GraphQL backend"],
+  "business_context": {
+    "sector": "Finance",
+    "regulation": "PCI-DSS",
+    "criticality": "Critical"
+  }
+}
