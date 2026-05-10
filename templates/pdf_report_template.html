@@ -369,6 +369,48 @@
         </div>
     </div>
 
+    <!-- Architecture & Data Flow Diagram -->
+    <div class="page page-break">
+        <h1>Architecture &amp; Data Flow Diagram</h1>
+        <p style="font-size:9pt;color:var(--text-muted);margin-bottom:18px;">
+            Executive architecture view — automatically generated from the uploaded architecture model or APK metadata.
+        </p>
+
+        <!-- HTML static diagram (PDF-safe fallback) -->
+        {{ architecture_html | safe }}
+
+        <!-- Legend + Trust Boundaries side by side -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;">
+            <div style="border:1px solid var(--border);border-radius:8px;padding:14px;">
+                <div style="font-size:8pt;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Legend</div>
+                <div style="display:flex;flex-direction:column;gap:5px;font-size:8pt;">
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#1D4ED8;flex-shrink:0;"></span>Mobile Application</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#0891B2;flex-shrink:0;"></span>Users / Actors</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#7C3AED;flex-shrink:0;"></span>Authentication</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#14532D;flex-shrink:0;"></span>HTTPS (Secure)</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#EF4444;flex-shrink:0;"></span>HTTP / Danger</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#F59E0B;flex-shrink:0;"></span>Exported Components</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#A855F7;flex-shrink:0;"></span>Sensitive Data</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:#991B1B;flex-shrink:0;"></span>External Attacker</span>
+                </div>
+            </div>
+            <div style="border:1px solid var(--border);border-radius:8px;padding:14px;">
+                <div style="font-size:8pt;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Trust Boundaries</div>
+                <div style="display:flex;flex-direction:column;gap:5px;">
+                    <div style="border-left:3px solid #0A84FF;padding:4px 8px;font-size:8pt;"><strong style="color:#0A84FF;">TB-01</strong> Mobile Device Boundary</div>
+                    <div style="border-left:3px solid #22C55E;padding:4px 8px;font-size:8pt;"><strong style="color:#22C55E;">TB-02</strong> Network Boundary</div>
+                    <div style="border-left:3px solid #A855F7;padding:4px 8px;font-size:8pt;"><strong style="color:#A855F7;">TB-03</strong> Backend / API Boundary</div>
+                    <div style="border-left:3px solid #F59E0B;padding:4px 8px;font-size:8pt;"><strong style="color:#F59E0B;">TB-04</strong> Privacy Boundary</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Threat Modeling Report: {{ app.app_name }}</span>
+            <span>Page 3</span>
+        </div>
+    </div>
+
     <!-- Assets & Risks -->
     <div class="page">
         <h1>System Components</h1>
@@ -462,6 +504,151 @@
         </div>
     </div>
 
+    <!-- Remediation Roadmap -->
+    <div class="page page-break">
+        <h1>Remediation Roadmap</h1>
+        <p>Prioritized security action plan generated from the detected risk register.</p>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Actions</div>
+                <div class="kpi-value">{{ analysis.roadmap_metrics.total_actions }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">High Priority</div>
+                <div class="kpi-value" style="color: {% if analysis.roadmap_metrics.high_priority > 0 %}var(--critical){% else %}var(--low){% endif %};">{{ analysis.roadmap_metrics.high_priority }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Avg Risk Reduction</div>
+                <div class="kpi-value" style="color: var(--primary);">-{{ analysis.roadmap_metrics.avg_reduction }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Quick Wins</div>
+                <div class="kpi-value" style="color: var(--low);">{{ analysis.roadmap_metrics.quick_wins }}</div>
+            </div>
+        </div>
+
+        <h2>Top 5 Priority Actions</h2>
+        {% for a in analysis.roadmap[:5] %}
+        <div class="recommendation-card" style="border-left-color: {% if 'P0' in a.priority %}var(--critical){% elif 'P1' in a.priority %}var(--high){% elif 'P2' in a.priority %}var(--medium){% else %}var(--low){% endif %}; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <div style="font-size: 8pt; font-weight: 800; color: {% if 'P0' in a.priority %}var(--critical){% elif 'P1' in a.priority %}var(--high){% elif 'P2' in a.priority %}var(--medium){% else %}var(--low){% endif %};">{{ a.priority }} | {{ a.threat_id }}</div>
+                <div style="font-size: 8pt; font-weight: 800; color: var(--text-muted);">Score: <span style="color: var(--critical);">{{ a.current_score }}</span> &rarr; <span style="color: var(--low);">{{ a.residual_score }}</span></div>
+            </div>
+            <div style="font-weight: 700; font-size: 10pt; margin-bottom: 8px;">{{ a.recommended_action }}</div>
+            <div style="font-size: 8pt; color: var(--text-muted); display: flex; gap: 15px;">
+                <span>Effort: <strong>{{ a.effort }}</strong></span>
+                <span>Owner: <strong>{{ a.owner }}</strong></span>
+                <span>MASVS: <strong>{{ a.masvs }}</strong></span>
+            </div>
+        </div>
+        {% endfor %}
+
+        <h2>Full Action Plan</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Priority</th>
+                    <th>ID</th>
+                    <th>Action</th>
+                    <th>Score</th>
+                    <th>Res.</th>
+                    <th>Effort</th>
+                    <th>Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in analysis.roadmap %}
+                <tr>
+                    <td><strong style="color: {% if 'P0' in a.priority %}var(--critical){% elif 'P1' in a.priority %}var(--high){% elif 'P2' in a.priority %}var(--medium){% else %}var(--low){% endif %};">{{ a.priority.split()[0] }}</strong></td>
+                    <td>{{ a.threat_id }}</td>
+                    <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ a.recommended_action }}</td>
+                    <td style="color: var(--critical); font-weight: bold;">{{ a.current_score }}</td>
+                    <td style="color: var(--low); font-weight: bold;">{{ a.residual_score }}</td>
+                    <td>{{ a.effort }}</td>
+                    <td><span style="font-size: 7pt;">{{ a.owner }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <span>Threat Modeling Report: {{ app.app_name }}</span>
+            <span>Roadmap Page</span>
+        </div>
+    </div>
+
+    <!-- RAG-Based Threat Intelligence -->
+    {% set has_rag = False %}
+    {% for t in analysis.threats %}
+        {% if t.rag_data %}
+            {% set has_rag = True %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if has_rag %}
+    <div class="page page-break">
+        <h1>🧠 RAG-Based Threat Intelligence</h1>
+        <p>Local OWASP-inspired knowledge enrichment for detected mobile security threats. <strong>Disclaimer:</strong> The RAG layer enriches deterministic findings and does not replace manual security validation.</p>
+        
+        {% for t in analysis.threats %}
+        {% if t.rag_data %}
+        <div class="threat-card" style="border-left: 3px solid var(--primary); margin-bottom: 20px;">
+            <div style="font-size: 8pt; font-weight: 800; color: var(--primary); margin-bottom: 5px;">THREAT ENRICHMENT</div>
+            <div style="font-weight: 800; font-size: 11pt; color: var(--dark-navy); margin-bottom: 8px;">{{ t.threat }} ({{ t.masvs }})</div>
+            
+            <div style="font-size: 9pt; line-height: 1.5; color: #334155; margin-bottom: 12px;">
+                {{ t.rag_data.rag_explanation }}
+            </div>
+            
+            <div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 12px;">
+                <div style="font-size: 8pt; font-weight: 700; color: var(--medium); text-transform: uppercase; margin-bottom: 4px;">MASVS Rationale</div>
+                <div style="font-size: 8.5pt; color: #475569;">{{ t.rag_data.masvs_rationale }}</div>
+            </div>
+            
+            {% if t.rag_data.verification_tests %}
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 8pt; font-weight: 700; color: var(--secondary); text-transform: uppercase; margin-bottom: 4px;">Suggested Verification Tests</div>
+                <ul style="font-size: 8.5pt; color: #475569; margin: 0; padding-left: 15px;">
+                    {% for test in t.rag_data.verification_tests %}
+                    <li style="margin-bottom: 3px;">{{ test }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if t.rag_data.missing_information %}
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 8pt; font-weight: 700; color: var(--high); text-transform: uppercase; margin-bottom: 4px;">Missing Information (Requires Review)</div>
+                <ul style="font-size: 8.5pt; color: #475569; margin: 0; padding-left: 15px;">
+                    {% for mi in t.rag_data.missing_information %}
+                    <li style="margin-bottom: 3px;">{{ mi }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if t.rag_data.rag_sources %}
+            <div style="border-top: 1px solid var(--border); padding-top: 8px;">
+                <div style="font-size: 7pt; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Knowledge Sources Used</div>
+                <div>
+                    {% for s in t.rag_data.rag_sources %}
+                    <span style="display: inline-block; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: var(--primary); font-size: 7pt; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-right: 4px;">{{ s }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+        
+        <div class="footer">
+            <span>Threat Modeling Report: {{ app.app_name }}</span>
+            <span>RAG Intelligence Page</span>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Recommendations & Conclusion -->
     <div class="page">
         <h1>Security Recommendations</h1>
@@ -484,7 +671,11 @@
         </ul>
 
         <h2>Report Limitations</h2>
+        {% if app.app_type == "Android APK" %}
+        <p style="font-size: 8pt; color: var(--text-muted);">This APK-based analysis is limited to static metadata extraction. It does not replace manual code review, dynamic analysis, reverse engineering, runtime testing or penetration testing. The scores are heuristics-based and should be validated against actual environment constraints.</p>
+        {% else %}
         <p style="font-size: 8pt; color: var(--text-muted);">This report is based on declared architecture and YAML input. It does not replace manual code review, penetration testing, dynamic analysis, APK reverse engineering or production security validation. The scores are heuristics-based and should be validated against actual environment constraints.</p>
+        {% endif %}
 
         <h2>Conclusion</h2>
         <p>Threat modeling is a continuous process. The high-risk items identified in this report should be integrated into the development backlog as security requirements. Regular updates to this model are recommended as the application architecture evolves.</p>

@@ -1,4 +1,4 @@
-﻿def as_list(value):
+def as_list(value):
     if value is None:
         return []
     if isinstance(value, list):
@@ -249,6 +249,119 @@ def generate_threats(app_data):
             "Supprimer les logs sensibles et désactiver les logs debug en production.",
             "MASVS-CODE"
         ))
+
+    if app_data.get("app_type") == "Android APK":
+        meta = app_data.get("apk_metadata", {})
+        
+        sensitive_perms = ["ACCESS_FINE_LOCATION", "CAMERA", "RECORD_AUDIO", "READ_CONTACTS", "READ_SMS", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+        if has_keyword(app_data.get("permissions", []), sensitive_perms):
+            threats.append(make_threat(
+                counter,
+                "L'application demande des permissions sensibles pouvant exposer des données privées de l'utilisateur.",
+                "Information Disclosure",
+                "Données personnelles",
+                "Permissions Android",
+                4,
+                3,
+                4,
+                "Appliquer le principe de moindre privilège et justifier chaque permission.",
+                "MASVS-PRIVACY"
+            ))
+            counter += 1
+
+        if has_exported_component(app_data):
+            threats.append(make_threat(
+                counter,
+                "An exported Android component may be invoked by another application.",
+                "Elevation of Privilege",
+                "Composants Android",
+                "Composant exporté",
+                4,
+                3,
+                4,
+                "Restreindre l'accès avec android:exported='false' ou des permissions signature.",
+                "MASVS-PLATFORM"
+            ))
+            counter += 1
+
+        if meta.get("allowBackup") is True:
+            threats.append(make_threat(
+                counter,
+                "Application backup may expose sensitive local data.",
+                "Information Disclosure",
+                "Données locales",
+                "Sauvegarde Android",
+                3,
+                3,
+                3,
+                "Désactiver la sauvegarde avec android:allowBackup='false' dans le manifeste.",
+                "MASVS-STORAGE"
+            ))
+            counter += 1
+
+        if meta.get("debuggable") is True:
+            threats.append(make_threat(
+                counter,
+                "Debuggable build may expose internal behavior and increase attack surface.",
+                "Information Disclosure / Tampering",
+                "Code et Mémoire",
+                "Mode Debug",
+                5,
+                4,
+                5,
+                "S'assurer que android:debuggable='false' pour la version de production.",
+                "MASVS-CODE"
+            ))
+            counter += 1
+
+        if uses_http(app_data):
+            threats.append(make_threat(
+                counter,
+                "Cleartext HTTP traffic may be intercepted or modified.",
+                "Information Disclosure",
+                "Trafic réseau",
+                "Connexion HTTP",
+                5,
+                4,
+                5,
+                "Forcer l'utilisation de HTTPS via la Network Security Configuration.",
+                "MASVS-NETWORK"
+            ))
+            counter += 1
+
+        if has_api(app_data):
+            threats.append(make_threat(
+                counter,
+                "Mobile API endpoints may be abused through automation, enumeration or replay.",
+                "Denial of Service / Tampering",
+                "API backend",
+                "Endpoints API",
+                4,
+                3,
+                4,
+                "Implémenter du rate limiting, authentification robuste et validation des entrées.",
+                "MASVS-NETWORK"
+            ))
+            counter += 1
+
+        try:
+            target_sdk = int(meta.get("targetSdkVersion", 0))
+            if target_sdk > 0 and target_sdk < 31:
+                threats.append(make_threat(
+                    counter,
+                    "Outdated target SDK may reduce platform security protections.",
+                    "Elevation of Privilege",
+                    "Application entière",
+                    "SDK cible obsolète",
+                    3,
+                    3,
+                    3,
+                    "Mettre à jour targetSdkVersion vers la version d'API la plus récente.",
+                    "MASVS-PLATFORM"
+                ))
+                counter += 1
+        except:
+            pass
 
     return threats
 

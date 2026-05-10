@@ -52,7 +52,14 @@ def generate_pdf_report(app_data, analysis):
         "masvs_count": masvs_count
     }
     
-    # 2. Render HTML with Jinja2
+    # 2. Generate architecture HTML diagram for PDF
+    from src.architecture_graph import build_architecture_html_for_pdf
+    try:
+        architecture_html = build_architecture_html_for_pdf(app_data)
+    except Exception:
+        architecture_html = '<div style="padding:12px;color:#64748B;font-style:italic;">Architecture diagram could not be generated.</div>'
+    
+    # 3. Render HTML with Jinja2
     env = Environment(loader=FileSystemLoader("templates"))
     template = env.get_template("pdf_report_template.html")
     
@@ -60,6 +67,7 @@ def generate_pdf_report(app_data, analysis):
         app=app_data,
         analysis=analysis,
         metrics=metrics,
+        architecture_html=architecture_html,
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M")
     )
     

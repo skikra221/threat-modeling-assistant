@@ -1,0 +1,42 @@
+app_name: "SecureChat Messenger"
+app_type: "Android Application"
+description: "E2E encrypted messaging."
+
+users:
+  - "User"
+
+sensitive_data:
+  - "Chat Messages"
+  - "Contact List"
+  - "Decryption Keys"
+
+permissions:
+  - "READ_CONTACTS"
+  - "CAMERA"
+  - "RECORD_AUDIO"
+  - "RECEIVE_SMS"
+
+endpoints:
+  - name: "Socket"
+    url: "wss://chat.securemsg.com/socket"
+  - name: "Keys"
+    url: "https://keyserver.securemsg.com"
+
+components:
+  - name: "MessageReceiver"
+    type: "BroadcastReceiver"
+    exported: true
+
+authentication:
+  type: "SMS OTP"
+
+storage:
+  local_database: "SQLCipher"
+  stores_tokens: true
+
+network_flows:
+  - "App to WebSocket"
+
+business_context:
+  sector: "Communications"
+  criticality: "High"

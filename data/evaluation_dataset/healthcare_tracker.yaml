@@ -1,0 +1,42 @@
+app_name: "HealthTrack Connect"
+app_type: "Mobile Application"
+description: "A tracking app for daily health metrics and bluetooth connected scales."
+
+users:
+  - "Patient"
+  - "Doctor (Read-Only)"
+
+sensitive_data:
+  - "Weight and Heart Rate History"
+  - "Medical Conditions"
+  - "Location Data"
+
+permissions:
+  - "ACCESS_FINE_LOCATION"
+  - "BLUETOOTH_ADMIN"
+  - "READ_EXTERNAL_STORAGE"
+
+endpoints:
+  - name: "Upload"
+    url: "https://health-api.hospital.com/upload"
+  - name: "Legacy Sync"
+    url: "http://legacy.hospital.com/sync"
+
+components:
+  - name: "SyncService"
+    type: "Service"
+    exported: true
+
+authentication:
+  type: "Username and Password"
+
+storage:
+  local_database: "Local JSON files"
+  stores_tokens: false
+
+network_flows:
+  - "App to Hospital API"
+
+business_context:
+  sector: "Healthcare"
+  criticality: "High"

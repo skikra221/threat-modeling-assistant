@@ -1,0 +1,43 @@
+app_name: "Fintech Wallet Pro"
+app_type: "iOS & Android Mobile Application"
+description: "Mobile cryptocurrency and fiat wallet."
+
+users:
+  - "Retail Customer"
+  - "Admin Support"
+
+sensitive_data:
+  - "User KYC Data"
+  - "Session Tokens"
+  - "Cryptocurrency Private Keys"
+
+permissions:
+  - "CAMERA"
+  - "INTERNET"
+
+endpoints:
+  - name: "Auth"
+    url: "https://api.fintechwallet.com/v1/auth"
+  - name: "Transfer"
+    url: "https://api.fintechwallet.com/v1/transfer"
+  - name: "Admin Legacy"
+    url: "http://dev.fintechwallet.com/admin"
+
+components:
+  - name: "LoginActivity"
+    type: "Activity"
+    exported: true
+
+authentication:
+  type: "Biometric (FaceID/TouchID)"
+
+storage:
+  local_database: "SQLite Database (Unencrypted)"
+  stores_tokens: true
+
+network_flows:
+  - "App to API"
+
+business_context:
+  sector: "Finance"
+  criticality: "High"

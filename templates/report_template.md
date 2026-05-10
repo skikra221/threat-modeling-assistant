@@ -1,4 +1,4 @@
-﻿# Rapport de Threat Modeling — {{ app.app_name }}
+# Rapport de Threat Modeling — {{ app.app_name }}
 
 **Date de génération :** {{ generated_at }}
 
@@ -47,6 +47,12 @@ L’analyse a identifié **{{ analysis.threats | length }} menace(s)**.
 
 ---
 
+## 5bis. Architecture & Data Flow Diagram
+
+{{ mermaid_diagram if mermaid_diagram else "_Diagram not available._" }}
+
+---
+
 ## 6. Méthodologie
 
 La méthodologie utilisée repose sur :
@@ -75,6 +81,46 @@ La méthodologie utilisée repose sur :
 
 ---
 
+## 8bis. Remediation Roadmap
+
+| Priority | ID | Recommended Action | Current Score | Residual Score | Risk Reduction | Effort | Owner | MASVS |
+|---|---|---|---:|---:|---:|---|---|---|
+{% for a in analysis.roadmap %}
+| {{ a.priority }} | {{ a.threat_id }} | {{ a.recommended_action }} | {{ a.current_score }} | {{ a.residual_score }} | -{{ a.risk_reduction }} | {{ a.effort }} | {{ a.owner }} | {{ a.masvs }} |
+{% endfor %}
+
+---
+
+## 8ter. RAG-Based Threat Explanations
+
+{% for t in analysis.threats %}
+{% if t.rag_data %}
+### Threat: {{ t.threat }} ({{ t.masvs }})
+
+**Explanation:**
+{{ t.rag_data.rag_explanation }}
+
+**MASVS Rationale:**
+{{ t.rag_data.masvs_rationale }}
+
+**Suggested Verification Tests:**
+{% for test in t.rag_data.verification_tests %}
+- {{ test }}
+{% endfor %}
+
+**Missing Information (Requires Review):**
+{% for mi in t.rag_data.missing_information %}
+- {{ mi }}
+{% endfor %}
+
+**Sources:** {{ t.rag_data.rag_sources | join(', ') }}
+
+---
+{% endif %}
+{% endfor %}
+
+---
+
 ## 9. Questions manquantes
 
 {% if analysis.missing_questions %}
@@ -89,7 +135,11 @@ Aucune question manquante détectée.
 
 ## 10. Limites
 
+{% if app.app_type == "Android APK" %}
+This APK-based analysis is limited to static metadata extraction. It does not replace manual code review, dynamic analysis, reverse engineering, runtime testing or penetration testing.
+{% else %}
 Ce rapport est généré à partir des informations déclarées. Il ne remplace pas un audit manuel, une revue de code ou un test d’intrusion.
+{% endif %}
 
 ---
 

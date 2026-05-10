@@ -1,7 +1,7 @@
-﻿from datetime import datetime
+from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
 
-def generate_report(app_data, analysis):
+def generate_report(app_data, analysis, mermaid_diagram: str = ""):
     env = Environment(
         loader=FileSystemLoader("templates"),
         autoescape=False
@@ -12,5 +12,6 @@ def generate_report(app_data, analysis):
     return template.render(
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M"),
         app=app_data,
-        analysis=analysis
+        analysis=analysis,
+        mermaid_diagram=mermaid_diagram
     )

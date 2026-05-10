@@ -1,0 +1,43 @@
+app_name: "E-Commerce FastShop"
+app_type: "Mobile Application"
+description: "Mobile store for buying electronics."
+
+users:
+  - "Shopper"
+  - "Guest"
+
+sensitive_data:
+  - "Credit Card Tokens (Stripe)"
+  - "Home Address"
+  - "Purchase History"
+
+permissions:
+  - "INTERNET"
+
+endpoints:
+  - name: "Products"
+    url: "https://api.fastshop.com/products"
+  - name: "Checkout"
+    url: "https://api.fastshop.com/checkout"
+  - name: "Stripe"
+    url: "https://stripe.com/api"
+
+components:
+  - name: "CheckoutActivity"
+    type: "Activity"
+    exported: false
+
+authentication:
+  type: "OAuth (Google/Apple)"
+
+storage:
+  local_database: "CoreData"
+  stores_tokens: true
+
+network_flows:
+  - "App to Store API"
+  - "App to Stripe"
+
+business_context:
+  sector: "Retail"
+  criticality: "Medium"
