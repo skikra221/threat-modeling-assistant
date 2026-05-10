@@ -2067,12 +2067,12 @@ def render_architecture_diagram(app_data: dict) -> None:
     /* Diagram Canvas: large screenshot-ready panel matching the reference mockup. */
     [data-testid="stGraphVizChart"] {
         width: 100% !important;
-        min-height: 740px !important;
-        padding: 24px !important;
+        min-height: 600px !important;
+        padding: 18px !important;
         border-radius: 28px !important;
-        background: linear-gradient(135deg, rgba(8,18,32,0.74), rgba(3,12,23,0.48)) !important;
+        background: radial-gradient(circle at 50% 45%, rgba(20,35,55,0.34), rgba(7,11,20,0.98) 62%) !important;
         border: 1px solid rgba(148,163,184,0.18) !important;
-        box-shadow: 0 28px 90px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+        box-shadow: 0 28px 90px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.04) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -2095,10 +2095,10 @@ def render_architecture_diagram(app_data: dict) -> None:
     [data-testid="stGraphVizChart"] svg {
         display: block !important;
         width: 100% !important;
-        max-width: 1220px !important;
+        max-width: 1320px !important;
         height: auto !important;
         object-fit: contain !important;
-        transform: scale(1.04) !important;
+        transform: scale(1.12) !important;
         transform-origin: center center;
         overflow: visible !important;
     }
@@ -2216,7 +2216,7 @@ def render_architecture_diagram(app_data: dict) -> None:
             grid-template-columns: 1fr;
         }
         [data-testid="stGraphVizChart"] {
-            min-height: 600px !important;
+            min-height: 520px !important;
         }
         [data-testid="stGraphVizChart"] img,
         [data-testid="stGraphVizChart"] svg {
