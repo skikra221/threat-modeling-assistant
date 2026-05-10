@@ -2025,14 +2025,14 @@ def render_architecture_diagram(app_data: dict) -> None:
     .architecture-section {
         width: 100%;
         max-width: 1600px;
-        margin: 24px auto 56px auto;
+        margin: 16px auto 56px auto;
         background: transparent !important;
     }
 
     /* Tabs Styling */
     [data-testid="stTabs"] {
         background: transparent !important;
-        margin-bottom: 24px !important;
+        margin-bottom: 20px !important;
     }
     [data-testid="stTabs"] [data-testid="stHorizontalBlock"] {
         gap: 40px !important;
@@ -2059,20 +2059,21 @@ def render_architecture_diagram(app_data: dict) -> None:
     /* Main Grid Layout */
     .architecture-main-grid {
         display: grid;
-        grid-template-columns: minmax(0, 3.1fr) minmax(320px, 1fr);
+        grid-template-columns: minmax(0, 3fr) minmax(300px, 0.9fr);
         gap: 24px;
-        align-items: stretch;
+        align-items: start;
     }
 
-    /* Diagram Canvas: large screenshot-ready panel matching the reference mockup. */
+    /* Diagram Canvas: large but fully contained, no transform-based cropping. */
     [data-testid="stGraphVizChart"] {
         width: 100% !important;
-        min-height: 600px !important;
-        padding: 18px !important;
+        min-height: 680px !important;
+        max-height: none !important;
+        padding: 28px !important;
         border-radius: 28px !important;
-        background: radial-gradient(circle at 50% 45%, rgba(20,35,55,0.34), rgba(7,11,20,0.98) 62%) !important;
-        border: 1px solid rgba(148,163,184,0.18) !important;
-        box-shadow: 0 28px 90px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+        background: linear-gradient(135deg, rgba(8,18,32,0.58), rgba(3,12,23,0.36)) !important;
+        border: 1px solid rgba(148,163,184,0.14) !important;
+        box-shadow: 0 28px 90px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -2092,13 +2093,21 @@ def render_architecture_diagram(app_data: dict) -> None:
         width: 100% !important;
     }
     [data-testid="stGraphVizChart"] img,
-    [data-testid="stGraphVizChart"] svg {
+    [data-testid="stGraphVizChart"] svg,
+    .diagram-render,
+    .diagram-render svg,
+    .diagram-render img,
+    .mermaid,
+    .mermaid svg,
+    .graphviz,
+    .graphviz svg {
         display: block !important;
         width: 100% !important;
-        max-width: 1320px !important;
+        max-width: 1120px !important;
         height: auto !important;
+        max-height: 620px !important;
         object-fit: contain !important;
-        transform: scale(1.12) !important;
+        transform: none !important;
         transform-origin: center center;
         overflow: visible !important;
     }
@@ -2108,12 +2117,12 @@ def render_architecture_diagram(app_data: dict) -> None:
         display: flex;
         flex-direction: column;
         gap: 18px;
-        align-self: stretch;
-        height: 100%;
+        align-self: start;
     }
     .architecture-side-panel {
         border-radius: 24px;
-        padding: 26px 28px;
+        padding: 22px 24px;
+        max-height: none;
         background: linear-gradient(135deg, rgba(5,24,20,0.72), rgba(8,18,32,0.48));
         border: 1px solid rgba(74,226,119,0.18);
         box-shadow: 0 20px 60px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.03);
@@ -2133,12 +2142,12 @@ def render_architecture_diagram(app_data: dict) -> None:
     .legend-item {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
         color: #F8FAFC;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 700;
-        margin: 16px 0;
-        line-height: 1.25;
+        margin: 12px 0;
+        line-height: 1.3;
     }
     .legend-dot {
         width: 14px;
@@ -2150,11 +2159,11 @@ def render_architecture_diagram(app_data: dict) -> None:
 
     /* Trust Boundaries */
     .trust-card {
-        padding: 16px 18px;
+        padding: 14px 16px;
         border-radius: 14px;
         background: rgba(8,18,32,0.24);
         border: 1px solid rgba(148,163,184,0.10);
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         transition: transform 0.2s ease, background 0.2s ease;
     }
     .trust-card:last-child {
@@ -2216,7 +2225,7 @@ def render_architecture_diagram(app_data: dict) -> None:
             grid-template-columns: 1fr;
         }
         [data-testid="stGraphVizChart"] {
-            min-height: 520px !important;
+            min-height: 560px !important;
         }
         [data-testid="stGraphVizChart"] img,
         [data-testid="stGraphVizChart"] svg {
@@ -2260,8 +2269,8 @@ def render_architecture_diagram(app_data: dict) -> None:
     tab1, tab2, tab3 = st.tabs(["Summary View", "Detailed Flow", "Mermaid Source"])
 
     with tab1:
-        # Use columns to simulate the 76/24 layout
-        col_diagram, col_sidebar = st.columns([3.1, 1], gap="medium")
+        # Use columns to simulate the balanced 3fr / 0.9fr architecture layout
+        col_diagram, col_sidebar = st.columns([3, 0.9], gap="medium")
     
         with col_diagram:
             try:
