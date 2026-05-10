@@ -1257,155 +1257,138 @@ def render_kpi_cards(threats, global_risk):
         )
 
 def render_dashboard_overview(app_data, analysis):
-    """Render App Summary, Critical Assets, Entry Points, Threat Actors — premium glassmorphism grid."""
+    """Render the single architecture summary card grid below the diagram."""
 
     # ── Shared card styles ────────────────────────────────────────────────
-    CARD = (
-        'background:rgba(8,18,32,0.28);'
-        'backdrop-filter:blur(14px);'
-        'border:1px solid rgba(148,163,184,0.12);'
-        'border-radius:22px;'
-        'padding:24px 26px;'
-        'min-height:220px;'
-        'box-shadow:0 18px 50px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.04);'
-        'display:flex;flex-direction:column;gap:0;'
-    )
-    LABEL = (
-        'font-family:Inter,sans-serif;'
-        'font-size:11px;font-weight:700;color:#4BE277;'
-        'text-transform:uppercase;letter-spacing:0.14em;'
-        'margin-bottom:14px;'
-    )
+    CARD_CLASS = 'architecture-summary-card'
+    LABEL_CLASS = 'architecture-summary-label'
     ROW_SEP = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(148,163,184,0.07);'
     ROW_LAST = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;'
     KEY_S = 'font-family:Inter,sans-serif;font-size:13px;color:#64748B;'
     VAL_S = 'font-family:Inter,sans-serif;font-size:13px;font-weight:600;color:#E2E8F0;'
 
-    ov_col1, ov_col2, ov_col3, ov_col4 = st.columns(4)
-
     # ── 1. App Summary ────────────────────────────────────────────────────
-    with ov_col1:
-        if app_data.get("app_type") == "Android APK":
-            meta = app_data.get("apk_metadata", {})
-            prop_rows = (
-                f'<div style="{ROW_SEP}"><span style="{KEY_S}">Min SDK</span><span style="{VAL_S}">{meta.get("minSdkVersion","N/A")}</span></div>'
-                f'<div style="{ROW_SEP}"><span style="{KEY_S}">Target SDK</span><span style="{VAL_S}">{meta.get("targetSdkVersion","N/A")}</span></div>'
-                f'<div style="{ROW_SEP}"><span style="{KEY_S}">Permissions</span><span style="{VAL_S}">{len(app_data.get("permissions",[]))}</span></div>'
-                f'<div style="{ROW_LAST}"><span style="{KEY_S}">Exported Comps</span>'
-                f'<span style="font-family:Inter,sans-serif;font-size:13px;font-weight:700;color:#F97316;">{sum(1 for c in app_data.get("components",[]) if c.get("exported"))}</span></div>'
-            )
-            badge_txt, badge_color = 'APK ANALYSIS', '#38BDF8'
-        else:
-            prop_rows = (
-                f'<div style="{ROW_SEP}"><span style="{KEY_S}">Auth</span><span style="{VAL_S}">{app_data.get("authentication",{}).get("type","N/A")}</span></div>'
-                f'<div style="{ROW_SEP}"><span style="{KEY_S}">Database</span><span style="{VAL_S}">{app_data.get("storage",{}).get("local_database","N/A")}</span></div>'
-                f'<div style="{ROW_LAST}"><span style="{KEY_S}">Cert Pinning</span>'
-                f'<span style="display:inline-block;padding:2px 10px;border-radius:999px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.28);color:#4BE277;font-size:11px;font-weight:700;">Enabled</span></div>'
-            )
-            badge_txt, badge_color = 'YAML MODEL', '#94A3B8'
+    if app_data.get("app_type") == "Android APK":
+        meta = app_data.get("apk_metadata", {})
+        prop_rows = (
+            f'<div style="{ROW_SEP}"><span style="{KEY_S}">Min SDK</span><span style="{VAL_S}">{meta.get("minSdkVersion","N/A")}</span></div>'
+            f'<div style="{ROW_SEP}"><span style="{KEY_S}">Target SDK</span><span style="{VAL_S}">{meta.get("targetSdkVersion","N/A")}</span></div>'
+            f'<div style="{ROW_SEP}"><span style="{KEY_S}">Permissions</span><span style="{VAL_S}">{len(app_data.get("permissions",[]))}</span></div>'
+            f'<div style="{ROW_LAST}"><span style="{KEY_S}">Exported Comps</span>'
+            f'<span style="font-family:Inter,sans-serif;font-size:13px;font-weight:700;color:#F97316;">{sum(1 for c in app_data.get("components",[]) if c.get("exported"))}</span></div>'
+        )
+        badge_txt, badge_color = 'APK ANALYSIS', '#38BDF8'
+    else:
+        prop_rows = (
+            f'<div style="{ROW_SEP}"><span style="{KEY_S}">Auth</span><span style="{VAL_S}">{app_data.get("authentication",{}).get("type","N/A")}</span></div>'
+            f'<div style="{ROW_SEP}"><span style="{KEY_S}">Database</span><span style="{VAL_S}">{app_data.get("storage",{}).get("local_database","N/A")}</span></div>'
+            f'<div style="{ROW_LAST}"><span style="{KEY_S}">Cert Pinning</span>'
+            f'<span style="display:inline-block;padding:2px 10px;border-radius:999px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.28);color:#4BE277;font-size:11px;font-weight:700;">Enabled</span></div>'
+        )
+        badge_txt, badge_color = 'YAML MODEL', '#94A3B8'
 
-        badge_html = (
-            f'<span style="display:inline-block;padding:3px 10px;border-radius:999px;'
-            f'background:rgba(148,163,184,0.08);border:1px solid rgba(148,163,184,0.18);'
-            f'color:{badge_color};font-family:JetBrains Mono,Consolas,monospace;'
-            f'font-size:10px;font-weight:800;letter-spacing:0.08em;margin-bottom:16px;">{badge_txt}</span>'
-        )
-        app_name = app_data.get("app_name", "N/A")
-        st.markdown(
-            f'<div style="{CARD}">'
-            f'<div style="{LABEL}">App Summary</div>'
-            f'<div style="font-family:Inter,sans-serif;font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:8px;line-height:1.2;">{app_name}</div>'
-            f'{badge_html}'
-            f'{prop_rows}'
-            f'</div>',
-            unsafe_allow_html=True
-        )
+    badge_html = (
+        f'<span style="display:inline-block;padding:3px 10px;border-radius:999px;'
+        f'background:rgba(148,163,184,0.08);border:1px solid rgba(148,163,184,0.18);'
+        f'color:{badge_color};font-family:JetBrains Mono,Consolas,monospace;'
+        f'font-size:10px;font-weight:800;letter-spacing:0.08em;margin-bottom:16px;">{badge_txt}</span>'
+    )
+    app_name = app_data.get("app_name", "N/A")
+    app_summary_card = (
+        f'<div class="{CARD_CLASS}">'
+        f'<div class="{LABEL_CLASS}">App Summary</div>'
+        f'<div style="font-family:Inter,sans-serif;font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:8px;line-height:1.2;">{app_name}</div>'
+        f'{badge_html}'
+        f'{prop_rows}'
+        f'</div>'
+    )
 
     # ── 2. Critical Assets ────────────────────────────────────────────────
-    with ov_col2:
-        assets = analysis.get('assets', [])
-        if not assets:
-            assets = ['N/A']
-        total_assets = len(assets)
-        visible = assets[:8]
-        pills_html = ''.join(
-            f'<span style="display:inline-flex;align-items:center;padding:6px 13px;'
-            f'background:rgba(74,226,119,0.07);border:1px solid rgba(74,226,119,0.22);'
-            f'border-radius:999px;color:#A7F3D0;'
-            f'font-family:Inter,sans-serif;font-size:12px;font-weight:600;'
-            f'margin:4px 4px 4px 0;white-space:nowrap;">{a}</span>'
-            for a in visible
-        )
-        more_html = (
-            f'<span style="display:inline-block;padding:5px 12px;border-radius:999px;'
-            f'background:rgba(148,163,184,0.07);border:1px solid rgba(148,163,184,0.14);'
-            f'color:#64748B;font-size:11px;font-weight:600;margin:4px 0 0 0;">+{total_assets - len(visible)} more</span>'
-            if total_assets > len(visible) else ''
-        )
-        st.markdown(
-            f'<div style="{CARD}">'
-            f'<div style="{LABEL}">Critical Assets</div>'
-            f'<div style="display:flex;flex-wrap:wrap;gap:0;">{pills_html}{more_html}</div>'
-            f'</div>',
-            unsafe_allow_html=True
-        )
+    assets = analysis.get('assets', [])
+    if not assets:
+        assets = ['N/A']
+    total_assets = len(assets)
+    visible = assets[:8]
+    pills_html = ''.join(
+        f'<span style="display:inline-flex;align-items:center;padding:6px 13px;'
+        f'background:rgba(74,226,119,0.07);border:1px solid rgba(74,226,119,0.22);'
+        f'border-radius:999px;color:#A7F3D0;'
+        f'font-family:Inter,sans-serif;font-size:12px;font-weight:600;'
+        f'margin:4px 4px 4px 0;white-space:nowrap;">{a}</span>'
+        for a in visible
+    )
+    more_html = (
+        f'<span style="display:inline-block;padding:5px 12px;border-radius:999px;'
+        f'background:rgba(148,163,184,0.07);border:1px solid rgba(148,163,184,0.14);'
+        f'color:#64748B;font-size:11px;font-weight:600;margin:4px 0 0 0;">+{total_assets - len(visible)} more</span>'
+        if total_assets > len(visible) else ''
+    )
+    assets_card = (
+        f'<div class="{CARD_CLASS}">'
+        f'<div class="{LABEL_CLASS}">Critical Assets</div>'
+        f'<div style="display:flex;flex-wrap:wrap;gap:0;">{pills_html}{more_html}</div>'
+        f'</div>'
+    )
 
     # ── 3. Entry Points ───────────────────────────────────────────────────
-    with ov_col3:
-        eps = analysis.get('entry_points', [])
-        if not eps:
-            eps = ['N/A']
-        visible_eps = eps[:5]
-        more_eps = len(eps) - len(visible_eps)
-        ep_items = ''.join(
-            f'<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(148,163,184,0.06);">'
-            f'<span style="width:6px;height:6px;min-width:6px;border-radius:50%;background:#4BE277;margin-top:5px;'
-            f'box-shadow:0 0 6px rgba(75,226,119,0.5);"></span>'
-            f'<span style="font-family:Inter,sans-serif;font-size:13px;color:#CBD5E1;line-height:1.4;'
-            f'overflow:hidden;text-overflow:ellipsis;">{ep}</span>'
-            f'</div>'
-            for ep in visible_eps
-        )
-        more_ep_html = (
-            f'<div style="font-family:Inter,sans-serif;font-size:11px;color:#64748B;padding-top:8px;">+{more_eps} more entry points</div>'
-            if more_eps > 0 else ''
-        )
-        st.markdown(
-            f'<div style="{CARD}">'
-            f'<div style="{LABEL}">Entry Points</div>'
-            f'{ep_items}{more_ep_html}'
-            f'</div>',
-            unsafe_allow_html=True
-        )
+    eps = analysis.get('entry_points', [])
+    if not eps:
+        eps = ['N/A']
+    visible_eps = eps[:5]
+    more_eps = len(eps) - len(visible_eps)
+    ep_items = ''.join(
+        f'<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(148,163,184,0.06);">'
+        f'<span style="width:6px;height:6px;min-width:6px;border-radius:50%;background:#4BE277;margin-top:5px;'
+        f'box-shadow:0 0 6px rgba(75,226,119,0.5);"></span>'
+        f'<span style="font-family:Inter,sans-serif;font-size:13px;color:#CBD5E1;line-height:1.4;'
+        f'overflow:hidden;text-overflow:ellipsis;">{ep}</span>'
+        f'</div>'
+        for ep in visible_eps
+    )
+    more_ep_html = (
+        f'<div style="font-family:Inter,sans-serif;font-size:11px;color:#64748B;padding-top:8px;">+{more_eps} more entry points</div>'
+        if more_eps > 0 else ''
+    )
+    entry_points_card = (
+        f'<div class="{CARD_CLASS}">'
+        f'<div class="{LABEL_CLASS}">Entry Points</div>'
+        f'{ep_items}{more_ep_html}'
+        f'</div>'
+    )
 
     # ── 4. Threat Actors ──────────────────────────────────────────────────
-    with ov_col4:
-        actors = app_data.get('users', []) + app_data.get('threat_actors', [])
-        if not actors:
-            actors = ["Malicious App (Colocated)", "Network Adversary"]
-        level_cfg = [
-            ('#F97316', 'rgba(249,115,22,0.12)', 'rgba(249,115,22,0.28)', 'HIGH'),
-            ('#38BDF8', 'rgba(56,189,248,0.10)', 'rgba(56,189,248,0.25)', 'MEDIUM'),
-            ('#4BE277', 'rgba(75,226,119,0.10)', 'rgba(75,226,119,0.22)', 'LOW'),
-            ('#94A3B8', 'rgba(148,163,184,0.08)', 'rgba(148,163,184,0.18)', 'INFO'),
-        ]
-        actor_items = ''
-        for i, a in enumerate(actors[:4]):
-            col, bg, border, lvl = level_cfg[min(i, len(level_cfg)-1)]
-            actor_items += (
-                f'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(148,163,184,0.06);">'
-                f'<span style="font-family:Inter,sans-serif;font-size:13px;color:#CBD5E1;">{a}</span>'
-                f'<span style="display:inline-block;padding:3px 10px;border-radius:999px;background:{bg};border:1px solid {border};'
-                f'color:{col};font-family:JetBrains Mono,Consolas,monospace;font-size:10px;font-weight:800;letter-spacing:0.06em;">{lvl}</span>'
-                f'</div>'
-            )
-        st.markdown(
-            f'<div style="{CARD}">'
-            f'<div style="{LABEL}">Threat Actors</div>'
-            f'{actor_items}'
-            f'</div>',
-            unsafe_allow_html=True
+    actors = app_data.get('users', []) + app_data.get('threat_actors', [])
+    if not actors:
+        actors = ["Malicious App (Colocated)", "Network Adversary"]
+    level_cfg = [
+        ('#F97316', 'rgba(249,115,22,0.12)', 'rgba(249,115,22,0.28)', 'HIGH'),
+        ('#38BDF8', 'rgba(56,189,248,0.10)', 'rgba(56,189,248,0.25)', 'MEDIUM'),
+        ('#4BE277', 'rgba(75,226,119,0.10)', 'rgba(75,226,119,0.22)', 'LOW'),
+        ('#94A3B8', 'rgba(148,163,184,0.08)', 'rgba(148,163,184,0.18)', 'INFO'),
+    ]
+    actor_items = ''
+    for i, a in enumerate(actors[:4]):
+        col, bg, border, lvl = level_cfg[min(i, len(level_cfg)-1)]
+        actor_items += (
+            f'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(148,163,184,0.06);gap:12px;">'
+            f'<span style="font-family:Inter,sans-serif;font-size:13px;color:#CBD5E1;">{a}</span>'
+            f'<span style="display:inline-block;padding:3px 10px;border-radius:999px;background:{bg};border:1px solid {border};'
+            f'color:{col};font-family:JetBrains Mono,Consolas,monospace;font-size:10px;font-weight:800;letter-spacing:0.06em;">{lvl}</span>'
+            f'</div>'
         )
+    actors_card = (
+        f'<div class="{CARD_CLASS}">'
+        f'<div class="{LABEL_CLASS}">Threat Actors</div>'
+        f'{actor_items}'
+        f'</div>'
+    )
+
+    st.markdown(
+        f'<div class="architecture-summary-grid">'
+        f'{app_summary_card}{assets_card}{entry_points_card}{actors_card}'
+        f'</div>',
+        unsafe_allow_html=True
+    )
 
 def render_risk_register(threats):
     df = pd.DataFrame(threats)
@@ -2039,11 +2022,11 @@ def render_architecture_diagram(app_data: dict) -> None:
     st.markdown("""
 <style>
     /* Section Container */
-    .architecture-section { 
-        width: 100%; 
-        max-width: 1600px; 
-        margin: 24px auto 56px auto; 
-        background: transparent !important; 
+    .architecture-section {
+        width: 100%;
+        max-width: 1600px;
+        margin: 24px auto 56px auto;
+        background: transparent !important;
     }
 
     /* Tabs Styling */
@@ -2074,17 +2057,17 @@ def render_architecture_diagram(app_data: dict) -> None:
     }
 
     /* Main Grid Layout */
-    .architecture-main-grid { 
-        display: grid; 
-        grid-template-columns: minmax(0, 3.1fr) minmax(320px, 1fr); 
-        gap: 24px; 
-        align-items: stretch; 
+    .architecture-main-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 3.1fr) minmax(320px, 1fr);
+        gap: 24px;
+        align-items: stretch;
     }
 
-    /* Diagram Canvas */
+    /* Diagram Canvas: Streamlit renders Graphviz in its own wrapper, so style that wrapper directly. */
     [data-testid="stGraphVizChart"] {
         width: 100% !important;
-        min-height: 760px !important;
+        min-height: 740px !important;
         padding: 24px !important;
         border-radius: 28px !important;
         background: linear-gradient(135deg, rgba(8,18,32,0.62), rgba(3,12,23,0.40)) !important;
@@ -2094,88 +2077,156 @@ def render_architecture_diagram(app_data: dict) -> None:
         align-items: center !important;
         justify-content: center !important;
         overflow: visible !important;
+        box-sizing: border-box !important;
     }
+    [data-testid="stGraphVizChart"] > div,
+    [data-testid="stGraphVizChart"] div {
+        max-width: 100% !important;
+        overflow: visible !important;
+    }
+    [data-testid="stGraphVizChart"] img,
     [data-testid="stGraphVizChart"] svg {
         width: 100% !important;
-        max-width: 1180px !important;
+        max-width: 1200px !important;
         height: auto !important;
         object-fit: contain !important;
-        transform: scale(1.08);
+        transform: none !important;
         transform-origin: center center;
+        overflow: visible !important;
     }
 
     /* Side Panels */
-    .architecture-side-stack { 
-        display: flex; 
-        flex-direction: column; 
-        gap: 18px; 
-        align-self: stretch; 
+    .architecture-side-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        align-self: stretch;
+        height: 100%;
     }
-    .architecture-side-panel { 
-        border-radius: 24px; 
-        padding: 26px 28px; 
-        background: linear-gradient(135deg, rgba(5,24,20,0.70), rgba(8,18,32,0.44)); 
-        border: 1px solid rgba(74,226,119,0.18); 
-        box-shadow: 0 20px 60px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.03); 
-        backdrop-filter: blur(14px); 
+    .architecture-side-panel {
+        border-radius: 24px;
+        padding: 24px 26px;
+        background: linear-gradient(135deg, rgba(5,24,20,0.70), rgba(8,18,32,0.44));
+        border: 1px solid rgba(74,226,119,0.18);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.03);
+        backdrop-filter: blur(14px);
     }
-    .side-panel-title { 
-        font-family: 'JetBrains Mono', Consolas, monospace; 
-        font-size: 12px; 
-        letter-spacing: 0.18em; 
-        color: #94A3B8; 
-        font-weight: 800; 
-        text-transform: uppercase; 
-        margin-bottom: 18px; 
+    .side-panel-title {
+        font-family: 'JetBrains Mono', Consolas, monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: #94A3B8;
+        font-weight: 800;
+        text-transform: uppercase;
+        margin-bottom: 16px;
     }
 
     /* Legend Items */
-    .legend-item { 
-        display: flex; 
-        align-items: center; 
-        gap: 14px; 
-        color: #F8FAFC; 
-        font-size: 16px; 
-        font-weight: 700; 
-        margin: 16px 0; 
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        color: #F8FAFC;
+        font-size: 15px;
+        font-weight: 700;
+        margin: 13px 0;
+        line-height: 1.25;
     }
-    .legend-dot { 
-        width: 14px; 
-        height: 14px; 
-        border-radius: 999px; 
-        box-shadow: 0 0 12px rgba(74,226,119,0.12); 
+    .legend-dot {
+        width: 13px;
+        height: 13px;
+        min-width: 13px;
+        border-radius: 999px;
+        box-shadow: 0 0 12px rgba(74,226,119,0.12);
     }
 
     /* Trust Boundaries */
-    .trust-card { 
-        padding: 16px 18px; 
-        border-radius: 14px; 
-        background: rgba(8,18,32,0.24); 
-        border: 1px solid rgba(148,163,184,0.10); 
-        margin-bottom: 12px; 
+    .trust-card {
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: rgba(8,18,32,0.24);
+        border: 1px solid rgba(148,163,184,0.10);
+        margin-bottom: 10px;
         transition: transform 0.2s ease;
+    }
+    .trust-card:last-child {
+        margin-bottom: 0;
     }
     .trust-card:hover {
         transform: translateX(4px);
         background: rgba(8,18,32,0.32);
     }
-    .trust-id { 
-        font-family: 'JetBrains Mono', Consolas, monospace; 
-        font-size: 12px; 
-        font-weight: 800; 
-        color: #4CD7F6; 
-        margin-bottom: 6px; 
+    .trust-id {
+        font-family: 'JetBrains Mono', Consolas, monospace;
+        font-size: 11px;
+        font-weight: 800;
+        color: #4CD7F6;
+        margin-bottom: 6px;
     }
-    .trust-name { 
-        color: #F8FAFC; 
-        font-size: 15px; 
-        font-weight: 700; 
+    .trust-name {
+        color: #F8FAFC;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    /* Single final summary grid below Architecture Diagram */
+    .architecture-summary-grid {
+        width: 100%;
+        max-width: 1600px;
+        margin: 32px auto 48px auto;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 22px;
+        align-items: stretch;
+    }
+    .architecture-summary-card {
+        background: rgba(8,18,32,0.28);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(148,163,184,0.12);
+        border-radius: 22px;
+        padding: 24px 26px;
+        min-height: 220px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.04);
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .architecture-summary-label {
+        font-family: Inter, sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #4BE277;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        margin-bottom: 14px;
     }
 
     /* Responsive */
     @media (max-width: 1150px) {
-        [data-testid="stGraphVizChart"] { min-height: 600px !important; }
-        [data-testid="stGraphVizChart"] svg { transform: scale(1); max-width: 100% !important; }
+        .architecture-main-grid {
+            grid-template-columns: 1fr;
+        }
+        [data-testid="stGraphVizChart"] {
+            min-height: 600px !important;
+        }
+        [data-testid="stGraphVizChart"] img,
+        [data-testid="stGraphVizChart"] svg {
+            transform: none !important;
+            max-width: 100% !important;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .architecture-summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 650px) {
+        .architecture-summary-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -2228,15 +2279,6 @@ def render_architecture_diagram(app_data: dict) -> None:
                 _legend_row("#991B1B", "External Attacker"),
             ])
     
-            st.markdown(f"""
-<div class="architecture-side-panel">
-    <div class="side-panel-title">Legend</div>
-    <div style="margin-top:4px;">{legend_html}</div>
-</div>
-""", unsafe_allow_html=True)
-    
-            st.markdown('<div style="margin-top:18px;"></div>', unsafe_allow_html=True)
-
             # ── Trust Boundaries ─────────────────────────────────────────────
             def _tb_row(code, color, label):
                 return (f'<div class="trust-card" style="border-left:3px solid {color};">'
@@ -2252,9 +2294,15 @@ def render_architecture_diagram(app_data: dict) -> None:
             ])
     
             st.markdown(f"""
-<div class="architecture-side-panel">
-    <div class="side-panel-title">Trust Boundaries</div>
-    <div style="margin-top:4px;">{tb_html}</div>
+<div class="architecture-side-stack">
+    <div class="architecture-side-panel">
+        <div class="side-panel-title">Legend</div>
+        <div>{legend_html}</div>
+    </div>
+    <div class="architecture-side-panel">
+        <div class="side-panel-title">Trust Boundaries</div>
+        <div>{tb_html}</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
