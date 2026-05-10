@@ -2049,8 +2049,8 @@ def render_architecture_diagram(app_data: dict) -> None:
         transition: all 0.3s ease !important;
     }
     [data-testid="stTabs"] button[aria-selected="true"] {
-        color: #4BE277 !important;
-        border-bottom: 2px solid #4BE277 !important;
+        color: #39FF88 !important;
+        border-bottom: 2px solid #39FF88 !important;
     }
     [data-testid="stTabs"] button:hover {
         color: #4CD7F6 !important;
@@ -2064,36 +2064,41 @@ def render_architecture_diagram(app_data: dict) -> None:
         align-items: stretch;
     }
 
-    /* Diagram Canvas: Streamlit renders Graphviz in its own wrapper, so style that wrapper directly. */
+    /* Diagram Canvas: large screenshot-ready panel matching the reference mockup. */
     [data-testid="stGraphVizChart"] {
         width: 100% !important;
-        min-height: 0 !important;
-        aspect-ratio: auto !important;
-        padding: 10px !important;
-        border-radius: 24px !important;
-        background: rgba(7, 11, 20, 0.98) !important;
-        border: 1px solid rgba(148,163,184,0.12) !important;
-        box-shadow: 0 22px 70px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.035) !important;
-        display: block !important;
-        line-height: 0 !important;
+        min-height: 740px !important;
+        padding: 24px !important;
+        border-radius: 28px !important;
+        background: linear-gradient(135deg, rgba(8,18,32,0.74), rgba(3,12,23,0.48)) !important;
+        border: 1px solid rgba(148,163,184,0.18) !important;
+        box-shadow: 0 28px 90px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         overflow: visible !important;
         box-sizing: border-box !important;
+        line-height: 1 !important;
     }
     [data-testid="stGraphVizChart"] > div,
     [data-testid="stGraphVizChart"] div {
-        width: 100% !important;
         max-width: 100% !important;
         overflow: visible !important;
+    }
+    [data-testid="stGraphVizChart"] > div {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
     }
     [data-testid="stGraphVizChart"] img,
     [data-testid="stGraphVizChart"] svg {
         display: block !important;
         width: 100% !important;
-        max-width: 100% !important;
+        max-width: 1220px !important;
         height: auto !important;
-        max-height: 100% !important;
         object-fit: contain !important;
-        transform: none !important;
+        transform: scale(1.04) !important;
         transform-origin: center center;
         overflow: visible !important;
     }
@@ -2107,51 +2112,50 @@ def render_architecture_diagram(app_data: dict) -> None:
         height: 100%;
     }
     .architecture-side-panel {
-        border-radius: 22px;
-        padding: 20px 22px;
-        background: rgba(5, 24, 20, 0.58);
-        border: 1px solid rgba(74,226,119,0.16);
-        box-shadow: 0 16px 42px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.03);
+        border-radius: 24px;
+        padding: 26px 28px;
+        background: linear-gradient(135deg, rgba(5,24,20,0.72), rgba(8,18,32,0.48));
+        border: 1px solid rgba(74,226,119,0.18);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.03);
         backdrop-filter: blur(14px);
     }
     .side-panel-title {
         font-family: 'JetBrains Mono', Consolas, monospace;
-        font-size: 11px;
+        font-size: 12px;
         letter-spacing: 0.18em;
         color: #94A3B8;
         font-weight: 800;
         text-transform: uppercase;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
     }
 
     /* Legend Items */
     .legend-item {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
         color: #F8FAFC;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 700;
-        margin: 10px 0;
+        margin: 16px 0;
         line-height: 1.25;
     }
     .legend-dot {
-        width: 12px;
-        height: 12px;
-        min-width: 12px;
+        width: 14px;
+        height: 14px;
+        min-width: 14px;
         border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.16);
-        box-shadow: 0 0 12px currentColor;
+        box-shadow: 0 0 14px rgba(74,226,119,0.14);
     }
 
     /* Trust Boundaries */
     .trust-card {
-        padding: 12px 14px;
-        border-radius: 13px;
+        padding: 16px 18px;
+        border-radius: 14px;
         background: rgba(8,18,32,0.24);
         border: 1px solid rgba(148,163,184,0.10);
-        margin-bottom: 9px;
-        transition: transform 0.2s ease;
+        margin-bottom: 12px;
+        transition: transform 0.2s ease, background 0.2s ease;
     }
     .trust-card:last-child {
         margin-bottom: 0;
@@ -2162,14 +2166,14 @@ def render_architecture_diagram(app_data: dict) -> None:
     }
     .trust-id {
         font-family: 'JetBrains Mono', Consolas, monospace;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 800;
         color: #4CD7F6;
         margin-bottom: 6px;
     }
     .trust-name {
         color: #F8FAFC;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 700;
         line-height: 1.25;
     }
@@ -2212,8 +2216,7 @@ def render_architecture_diagram(app_data: dict) -> None:
             grid-template-columns: 1fr;
         }
         [data-testid="stGraphVizChart"] {
-            min-height: 0 !important;
-            aspect-ratio: auto !important;
+            min-height: 600px !important;
         }
         [data-testid="stGraphVizChart"] img,
         [data-testid="stGraphVizChart"] svg {
@@ -2274,14 +2277,14 @@ def render_architecture_diagram(app_data: dict) -> None:
                 return f'<div class="legend-item"><div class="legend-dot" style="background:{color};"></div>{label}</div>'
     
             legend_html = "".join([
-                _legend_row("#22C55E", "Mobile Application"),
-                _legend_row("#38BDF8", "Users / Actors"),
-                _legend_row("#A7F3D0", "Authentication"),
-                _legend_row("#16A34A", "HTTPS (Secure)"),
-                _legend_row("#EF4444", "HTTP / Danger"),
-                _legend_row("#FACC15", "Exported Component"),
-                _legend_row("#F97316", "Sensitive Data"),
-                _legend_row("#991B1B", "External Attacker"),
+                _legend_row("#2563EB", "Mobile Application"),
+                _legend_row("#06B6D4", "Users / Actors"),
+                _legend_row("#7C3AED", "Authentication"),
+                _legend_row("#1E3A5F", "HTTPS (Secure)"),
+                _legend_row("#B91C1C", "HTTP / Danger"),
+                _legend_row("#F97316", "Exported Component"),
+                _legend_row("#5B21B6", "Sensitive Data"),
+                _legend_row("#EF4444", "External Attacker"),
             ])
     
             # ── Trust Boundaries ─────────────────────────────────────────────
