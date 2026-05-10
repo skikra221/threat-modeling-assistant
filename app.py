@@ -2067,8 +2067,9 @@ def render_architecture_diagram(app_data: dict) -> None:
     /* Diagram Canvas: Streamlit renders Graphviz in its own wrapper, so style that wrapper directly. */
     [data-testid="stGraphVizChart"] {
         width: 100% !important;
-        min-height: 740px !important;
-        padding: 24px !important;
+        min-height: 520px !important;
+        aspect-ratio: 2.05 / 1 !important;
+        padding: 18px !important;
         border-radius: 28px !important;
         background: linear-gradient(135deg, rgba(8,18,32,0.62), rgba(3,12,23,0.40)) !important;
         border: 1px solid rgba(148,163,184,0.14) !important;
@@ -2086,9 +2087,11 @@ def render_architecture_diagram(app_data: dict) -> None:
     }
     [data-testid="stGraphVizChart"] img,
     [data-testid="stGraphVizChart"] svg {
+        display: block !important;
         width: 100% !important;
-        max-width: 1200px !important;
+        max-width: 100% !important;
         height: auto !important;
+        max-height: 100% !important;
         object-fit: contain !important;
         transform: none !important;
         transform-origin: center center;
@@ -2208,7 +2211,8 @@ def render_architecture_diagram(app_data: dict) -> None:
             grid-template-columns: 1fr;
         }
         [data-testid="stGraphVizChart"] {
-            min-height: 600px !important;
+            min-height: 460px !important;
+            aspect-ratio: 1.8 / 1 !important;
         }
         [data-testid="stGraphVizChart"] img,
         [data-testid="stGraphVizChart"] svg {
