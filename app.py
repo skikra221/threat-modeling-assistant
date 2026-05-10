@@ -2067,21 +2067,21 @@ def render_architecture_diagram(app_data: dict) -> None:
     /* Diagram Canvas: Streamlit renders Graphviz in its own wrapper, so style that wrapper directly. */
     [data-testid="stGraphVizChart"] {
         width: 100% !important;
-        min-height: 520px !important;
-        aspect-ratio: 2.05 / 1 !important;
-        padding: 18px !important;
-        border-radius: 28px !important;
-        background: linear-gradient(135deg, rgba(8,18,32,0.62), rgba(3,12,23,0.40)) !important;
-        border: 1px solid rgba(148,163,184,0.14) !important;
-        box-shadow: 0 28px 90px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04) !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+        min-height: 0 !important;
+        aspect-ratio: auto !important;
+        padding: 10px !important;
+        border-radius: 24px !important;
+        background: rgba(7, 11, 20, 0.98) !important;
+        border: 1px solid rgba(148,163,184,0.12) !important;
+        box-shadow: 0 22px 70px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.035) !important;
+        display: block !important;
+        line-height: 0 !important;
         overflow: visible !important;
         box-sizing: border-box !important;
     }
     [data-testid="stGraphVizChart"] > div,
     [data-testid="stGraphVizChart"] div {
+        width: 100% !important;
         max-width: 100% !important;
         overflow: visible !important;
     }
@@ -2107,11 +2107,11 @@ def render_architecture_diagram(app_data: dict) -> None:
         height: 100%;
     }
     .architecture-side-panel {
-        border-radius: 24px;
-        padding: 24px 26px;
-        background: linear-gradient(135deg, rgba(5,24,20,0.70), rgba(8,18,32,0.44));
-        border: 1px solid rgba(74,226,119,0.18);
-        box-shadow: 0 20px 60px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.03);
+        border-radius: 22px;
+        padding: 20px 22px;
+        background: rgba(5, 24, 20, 0.58);
+        border: 1px solid rgba(74,226,119,0.16);
+        box-shadow: 0 16px 42px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.03);
         backdrop-filter: blur(14px);
     }
     .side-panel-title {
@@ -2128,28 +2128,29 @@ def render_architecture_diagram(app_data: dict) -> None:
     .legend-item {
         display: flex;
         align-items: center;
-        gap: 13px;
+        gap: 12px;
         color: #F8FAFC;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 700;
-        margin: 13px 0;
+        margin: 10px 0;
         line-height: 1.25;
     }
     .legend-dot {
-        width: 13px;
-        height: 13px;
-        min-width: 13px;
+        width: 12px;
+        height: 12px;
+        min-width: 12px;
         border-radius: 999px;
-        box-shadow: 0 0 12px rgba(74,226,119,0.12);
+        border: 1px solid rgba(255,255,255,0.16);
+        box-shadow: 0 0 12px currentColor;
     }
 
     /* Trust Boundaries */
     .trust-card {
-        padding: 14px 16px;
-        border-radius: 14px;
+        padding: 12px 14px;
+        border-radius: 13px;
         background: rgba(8,18,32,0.24);
         border: 1px solid rgba(148,163,184,0.10);
-        margin-bottom: 10px;
+        margin-bottom: 9px;
         transition: transform 0.2s ease;
     }
     .trust-card:last-child {
@@ -2211,8 +2212,8 @@ def render_architecture_diagram(app_data: dict) -> None:
             grid-template-columns: 1fr;
         }
         [data-testid="stGraphVizChart"] {
-            min-height: 460px !important;
-            aspect-ratio: 1.8 / 1 !important;
+            min-height: 0 !important;
+            aspect-ratio: auto !important;
         }
         [data-testid="stGraphVizChart"] img,
         [data-testid="stGraphVizChart"] svg {
