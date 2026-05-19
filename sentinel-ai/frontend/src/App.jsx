@@ -1,15 +1,53 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 
+const STORAGE_KEY = 'theme'
+const themes = ['light', 'dark', 'system']
+
+const getStoredTheme = () => {
+  const saved = localStorage.getItem(STORAGE_KEY)
+  return themes.includes(saved) ? saved : 'system'
+}
+
 function App() {
   const [count, setCount] = useState(0)
+  const [theme, setTheme] = useState(getStoredTheme)
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, theme)
+
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const resolvedTheme = theme === 'system' ? (systemPrefersDark ? 'dark' : 'light') : theme
+
+    document.documentElement.dataset.theme = resolvedTheme
+    document.documentElement.style.colorScheme = resolvedTheme
+  }, [theme])
+
+  const themeLabel = useMemo(() => {
+    if (theme === 'system') return 'Système'
+    return theme === 'dark' ? 'Sombre' : 'Clair'
+  }, [theme])
 
   return (
     <>
       <section id="center">
+        <div className="theme-controls">
+          <label htmlFor="theme-select">Thème</label>
+          <select
+            id="theme-select"
+            value={theme}
+            onChange={(event) => setTheme(event.target.value)}
+            aria-label="Sélecteur de thème"
+          >
+            <option value="light">Clair</option>
+            <option value="dark">Sombre</option>
+            <option value="system">Système</option>
+          </select>
+          <span className="theme-status">Actuel: {themeLabel}</span>
+        </div>
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />
           <img src={reactLogo} className="framework" alt="React logo" />

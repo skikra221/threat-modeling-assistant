@@ -182,3 +182,39 @@
     border-right-color: var(--border);
   }
 }
+
+.theme-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--social-bg);
+  color: var(--text-h);
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  select {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-h);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font: inherit;
+    font-size: 14px;
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  }
+
+  .theme-status {
+    font-size: 14px;
+    color: var(--text);
+  }
+}
