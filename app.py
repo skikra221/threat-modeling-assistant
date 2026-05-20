@@ -3320,14 +3320,13 @@ def main():
         )
             
     with col_status:
-        selected_theme = st.selectbox(
+        st.selectbox(
             "Theme",
             options=["system", "light", "dark"],
             index=["system", "light", "dark"].index(st.session_state.theme_mode),
             key="theme_mode",
             help="Switch between System, Light, and Dark themes.",
         )
-        st.session_state.theme_mode = selected_theme
         st.markdown("""
         <div class="header-right">
             <div class="status-pill">
