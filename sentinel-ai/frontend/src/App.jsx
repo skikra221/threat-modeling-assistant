@@ -27,27 +27,40 @@ function App() {
   }, [theme])
 
   const themeLabel = useMemo(() => {
-    if (theme === 'system') return 'Système'
-    return theme === 'dark' ? 'Sombre' : 'Clair'
+    if (theme === 'system') return '🖥️ System'
+    return theme === 'dark' ? '🌙 Dark' : '☀️ Light'
   }, [theme])
 
   return (
     <>
-      <section id="center">
-        <div className="theme-controls">
-          <label htmlFor="theme-select">Thème</label>
-          <select
-            id="theme-select"
-            value={theme}
-            onChange={(event) => setTheme(event.target.value)}
-            aria-label="Sélecteur de thème"
-          >
-            <option value="light">Clair</option>
-            <option value="dark">Sombre</option>
-            <option value="system">Système</option>
-          </select>
-          <span className="theme-status">Actuel: {themeLabel}</span>
+      <header className="top-header">
+        <nav className="top-nav" aria-label="Primary navigation">
+          <a href="#">Dashboard</a>
+          <a href="#">Reports</a>
+          <a href="#">Docs</a>
+        </nav>
+
+        <div className="top-meta">
+          <span className="badge">SYSTEM READY</span>
+          <span className="version">v2.4</span>
+          <label className="theme-switcher" htmlFor="theme-select" data-testid="theme-switcher">
+            <span className="theme-switcher-label">Theme</span>
+            <select
+              id="theme-select"
+              value={theme}
+              onChange={(event) => setTheme(event.target.value)}
+              aria-label="Theme switcher"
+            >
+              <option value="light">☀️ Light</option>
+              <option value="dark">🌙 Dark</option>
+              <option value="system">🖥️ System</option>
+            </select>
+            <span className="theme-status">{themeLabel}</span>
+          </label>
         </div>
+      </header>
+
+      <section id="center">
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />
           <img src={reactLogo} className="framework" alt="React logo" />
