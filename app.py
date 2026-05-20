@@ -1033,6 +1033,43 @@ def inject_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
+def apply_theme_css(theme_mode: str):
+    resolved = theme_mode
+    if theme_mode == "system":
+        resolved = "dark"
+    if resolved == "light":
+        st.markdown("""
+        <style>
+            .stApp { background: #F8FAFC !important; color: #0F172A !important; }
+            [data-testid="stHorizontalBlock"]:first-of-type {
+                border-bottom: 1px solid rgba(15, 23, 42, 0.10) !important;
+                background: rgba(255,255,255,0.88) !important;
+            }
+            .brand { color: #16A34A !important; }
+            [data-testid="stRadio"] label { color: #334155 !important; }
+            [data-testid="stRadio"] label[data-selected="true"] {
+                color: #0F172A !important;
+                border-bottom-color: #16A34A !important;
+            }
+            .status-pill {
+                background: rgba(22,163,74,0.10) !important;
+                border-color: rgba(22,163,74,0.28) !important;
+                color: #166534 !important;
+            }
+            .version-pill {
+                background: rgba(148,163,184,0.12) !important;
+                border-color: rgba(100,116,139,0.30) !important;
+                color: #334155 !important;
+            }
+            div[data-testid="stFileUploader"] section,
+            div[data-testid="stFileUploaderDropzone"] {
+                background: #FFFFFF !important;
+                border-color: rgba(15,23,42,0.18) !important;
+            }
+            .theme-help { color:#475569 !important; }
+        </style>
+        """, unsafe_allow_html=True)
+
 def render_navbar():
     st.markdown("""
     <div class="sticky-navbar">
@@ -3255,6 +3292,9 @@ def render_evaluation_ui():
 
 def main():
     inject_custom_css()
+    if "theme_mode" not in st.session_state:
+        st.session_state.theme_mode = "system"
+    apply_theme_css(st.session_state.theme_mode)
     
     st.markdown('<div class="cyber-grid-bg"></div>', unsafe_allow_html=True)
     
@@ -3280,6 +3320,14 @@ def main():
         )
             
     with col_status:
+        selected_theme = st.selectbox(
+            "Theme",
+            options=["system", "light", "dark"],
+            index=["system", "light", "dark"].index(st.session_state.theme_mode),
+            key="theme_mode",
+            help="Switch between System, Light, and Dark themes.",
+        )
+        st.session_state.theme_mode = selected_theme
         st.markdown("""
         <div class="header-right">
             <div class="status-pill">
@@ -3289,6 +3337,7 @@ def main():
             <div class="version-pill">v2.4</div>
         </div>
         """, unsafe_allow_html=True)
+        st.caption("Theme switcher is available above.", help=None)
     
     if st.session_state.active_page == "Evaluation":
         render_evaluation_ui()
