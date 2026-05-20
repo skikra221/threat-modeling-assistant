@@ -1040,10 +1040,16 @@ def apply_theme_css(theme_mode: str):
     if resolved == "light":
         st.markdown("""
         <style>
-            .stApp { background: #F8FAFC !important; color: #0F172A !important; }
+            .stApp, .stAppViewContainer, [data-testid="stAppViewContainer"] {
+                background: #f6f8fb !important;
+                color: #0f172a !important;
+            }
+            * {
+                transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease, box-shadow 220ms ease, fill 220ms ease !important;
+            }
             [data-testid="stHorizontalBlock"]:first-of-type {
-                border-bottom: 1px solid rgba(15, 23, 42, 0.10) !important;
-                background: rgba(255,255,255,0.88) !important;
+                border-bottom: 1px solid #dbe3ee !important;
+                background: rgba(255,255,255,0.92) !important;
             }
             .brand { color: #16A34A !important; }
             [data-testid="stRadio"] label { color: #334155 !important; }
@@ -1052,19 +1058,74 @@ def apply_theme_css(theme_mode: str):
                 border-bottom-color: #16A34A !important;
             }
             .status-pill {
-                background: rgba(22,163,74,0.10) !important;
-                border-color: rgba(22,163,74,0.28) !important;
+                background: rgba(22, 163, 74, 0.10) !important;
+                border-color: rgba(22, 163, 74, 0.28) !important;
                 color: #166534 !important;
             }
             .version-pill {
-                background: rgba(148,163,184,0.12) !important;
-                border-color: rgba(100,116,139,0.30) !important;
+                background: #f1f5f9 !important;
+                border-color: #cbd5e1 !important;
                 color: #334155 !important;
+            }
+            [data-testid="stSegmentedControl"] button {
+                background: #f1f5f9 !important;
+                border: 1px solid #dbe3ee !important;
+                color: #334155 !important;
+                border-radius: 999px !important;
+            }
+            [data-testid="stSegmentedControl"] button[aria-selected="true"] {
+                background: rgba(53,224,111,0.14) !important;
+                border-color: rgba(22,163,74,0.45) !important;
+                color: #166534 !important;
+                font-weight: 700 !important;
+            }
+            [data-testid="stSegmentedControl"] p { color: inherit !important; }
+            [data-testid="stFileUploaderDropzone"] {
+                background: #ffffff !important;
+                border: 1px dashed #cbd5e1 !important;
+                box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08) !important;
             }
             div[data-testid="stFileUploader"] section,
             div[data-testid="stFileUploaderDropzone"] {
                 background: #FFFFFF !important;
-                border-color: rgba(15,23,42,0.18) !important;
+                border-color: #dbe3ee !important;
+            }
+            [data-testid="stFileUploader"] button {
+                background: #f8fafc !important;
+                border: 1px solid #dbe3ee !important;
+                color: #0f172a !important;
+            }
+            [data-testid="stFileUploader"] button:hover {
+                border-color: #16a34a !important;
+                color: #166534 !important;
+            }
+            .feature-card, .stepper-container, .rr-card, .kpi-card, .architecture-card,
+            .trust-boundary-card, .summary-card, .asset-card, .entry-point-card, .threat-actor-card {
+                background: #ffffff !important;
+                border: 1px solid #dbe3ee !important;
+                box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08) !important;
+            }
+            .hero-title, h1, h2, h3, h4, h5, h6, .feature-title {
+                color: #0f172a !important;
+            }
+            p, .hero-subtitle, .feature-desc, .leg, .stCaption, [data-testid="stMarkdownContainer"] p {
+                color: #475569 !important;
+            }
+            [data-testid="stMetricValue"], [data-testid="stMetricLabel"], .kpi-value, .kpi-label {
+                color: #0f172a !important;
+            }
+            [data-testid="stTabs"] button {
+                color: #334155 !important;
+                border-color: #dbe3ee !important;
+            }
+            [data-testid="stTabs"] button[aria-selected="true"] {
+                color: #166534 !important;
+                border-bottom-color: #16a34a !important;
+            }
+            [data-testid="stDataFrame"], .eval-tbl-wrap, table, thead, tbody, tr, td, th {
+                color: #0f172a !important;
+                border-color: #dbe3ee !important;
+                background: #ffffff !important;
             }
             .theme-help { color:#475569 !important; }
         </style>
@@ -3293,7 +3354,7 @@ def render_evaluation_ui():
 def main():
     inject_custom_css()
     if "theme_mode" not in st.session_state:
-        st.session_state.theme_mode = "system"
+        st.session_state.theme_mode = "dark"
     apply_theme_css(st.session_state.theme_mode)
     
     st.markdown('<div class="cyber-grid-bg"></div>', unsafe_allow_html=True)
@@ -3320,13 +3381,25 @@ def main():
         )
             
     with col_status:
-        st.selectbox(
+        if "theme_mode_ui" not in st.session_state:
+            st.session_state.theme_mode_ui = {
+                "system": "🖥️ System",
+                "light": "☀️ Light",
+                "dark": "🌙 Dark",
+            }.get(st.session_state.theme_mode, "🌙 Dark")
+        st.segmented_control(
             "Theme",
-            options=["system", "light", "dark"],
-            index=["system", "light", "dark"].index(st.session_state.theme_mode),
-            key="theme_mode",
-            help="Switch between System, Light, and Dark themes.",
+            options=["🖥️ System", "☀️ Light", "🌙 Dark"],
+            format_func=lambda x: x,
+            selection_mode="single",
+            key="theme_mode_ui",
         )
+        if st.session_state.theme_mode_ui == "🖥️ System":
+            st.session_state.theme_mode = "system"
+        elif st.session_state.theme_mode_ui == "☀️ Light":
+            st.session_state.theme_mode = "light"
+        elif st.session_state.theme_mode_ui == "🌙 Dark":
+            st.session_state.theme_mode = "dark"
         st.markdown("""
         <div class="header-right">
             <div class="status-pill">
@@ -3336,7 +3409,6 @@ def main():
             <div class="version-pill">v2.4</div>
         </div>
         """, unsafe_allow_html=True)
-        st.caption("Theme switcher is available above.", help=None)
     
     if st.session_state.active_page == "Evaluation":
         render_evaluation_ui()
